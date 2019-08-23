@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.yw">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--数据源(JDBC 数据源)-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/happy"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value=""></property>
+    </bean>
+    <!--用于生成SqlSessionFactory(能生成一个SqlSessionFactory)-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--数据源-->
+        <property name="dataSource" ref="dataSource"></property>
+        <!--别名的包-->
+        <property name="typeAliasesPackage" value="com.yw.entity"></property>
+        <!--mapper文件-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+        <!--所以插件(分页插件)-->
+        <property name="plugins">
+            <bean class="com.github.pagehelper.PageInterceptor"></bean>
+        </property>
+    </bean>
+
+    <!--自动扫面配置的basePackage包下的所有的dao的接口自动创建实现类-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <property name="basePackage" value="com.yw.dao"></property>
+    </bean>
+</beans>

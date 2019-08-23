@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yw.dao.IUserDao">
+    <select id="loadUser" resultType="user" parameterType="user">
+        select user.userId,user.userName,user.userPost,user.userPwd,user.useremail,role.roleName
+         from user as user left join user_role_mapping as ur on user.userId=ur.uid
+         left join tb_role as role on role.roleId=ur.rid
+         where user.userName=#{userName} and role.roleId=#{roleId} limit 1
+    </select>
+    <select id="loadUsers" resultType="user">
+        select * from user
+    </select>
+    <select id="getTotalCount" resultType="int">
+        select count(userId) from user
+    </select>
+    <insert id="addNewUser" parameterType="user">
+        insert into user values (#{userId},#{userName},#{userPost},#{userPwd},#{userEmail})
+    </insert>
+    <select id="getMaxId" resultType="int">
+        select max(userId) from user
+    </select>
+    <delete id="deleteById" parameterType="int">
+        delete from user where userId=#{userId}
+    </delete>
+    <update id="upUser" parameterType="user">
+         update user set userName=#{userName},userPost=#{userPost},userEmail=#{userEmail} where userId=#{userId}
+    </update>
+    <select id="loadById" parameterType="int" resultType="user">
+        select * from user where userId=#{userId};
+    </select>
+    <select id="queryByUserName" parameterType="string" resultType="user">
+        select * from user where userName like"%"#{cx}"%"
+    </select>
+    <select id="queryByUserPost" parameterType="string" resultType="user">
+        select * from user where userPost like"%"#{cx}"%"
+    </select>
+    <select id="queryMh" resultType="user" parameterType="string">
+         select * from user where userName like "%"#{cx}"%" or userPost like "%"#{cx}"%" or userEmail like "%"#{cx}"%"
+    </select>
+</mapper>

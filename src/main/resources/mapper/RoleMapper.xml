@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yw.dao.IRoleDao">
+    <select id="loadRoles" resultType="role">
+        select * from tb_role
+    </select>
+    <select id="getTotalCount" resultType="int">
+        select count(roleId) from tb_role
+    </select>
+    <select id="containRole" resultType="role" parameterType="int">
+        SELECT * FROM tb_role WHERE roleId IN(SELECT rid FROM user_role_mapping WHERE uid=#{uid})
+    </select>
+    <select id="unContainRole" parameterType="int" resultType="role">
+         SELECT * FROM tb_role WHERE roleId not IN(SELECT rid FROM user_role_mapping WHERE uid=#{uid})
+    </select>
+    <select id="queryRidByName" parameterType="string" resultType="int">
+        select roleId from tb_role where roleName=#{roleName}
+    </select>
+    <delete id="delByUidAndRid" parameterType="user_role">
+        delete from user_role_mapping where uid=#{uid} and rid=#{rid}
+    </delete>
+    <insert id="addDistribute" parameterType="user_role">
+        insert into user_role_mapping values (#{uid},#{rid})
+    </insert>
+    <select id="loadByPid" resultType="Role" parameterType="int">
+        select * from tb_role where roleId in (select rid from role_permission_mapping where pid=#{pid})
+    </select>
+    <!--通过rid删除关系表role_permission_mapping中对应的数据-->
+    <delete id="delete" parameterType="int">
+        delete from role_permission_mapping where rid=#{rid}
+    </delete>
+</mapper>
